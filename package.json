@@ -1,7 +1,7 @@
 {
   "name": "ke-globe",
   "version": "1.0.0",
-  "description": "전 세계 핵실험 타임라인 (1945~현재) — CesiumJS 3D 글로벌 시각화",
+  "description": "전 세계 핵실험 타임라인 (1945~현재) — Globe.gl 3D 글로벌 시각화",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "cesium": "^1.115.0"
+    "three": "^0.170.0",
+    "globe.gl": "^2.27.0"
   },
   "devDependencies": {
-    "vite": "^5.4.0",
-    "vite-plugin-cesium": "^1.2.23"
+    "vite": "^5.4.0"
   }
 }

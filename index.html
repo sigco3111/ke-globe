@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KE-GLOBE — 핵실험 타임라인</title>
-  <script type="module" src="/src/main.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -15,7 +14,7 @@
       overflow: hidden;
     }
 
-    #cesiumContainer {
+    #globeViz {
       width: 100vw;
       height: 100vh;
     }
@@ -175,8 +174,8 @@
   <button id="playBtn">▶ 자동 재생</button>
 </div>
 
-<!-- Cesium 컨테이너 -->
-<div id="cesiumContainer"></div>
+<!-- Globe.gl 컨테이너 -->
+<div id="globeViz"></div>
 
 <!-- 레전드 -->
 <div id="legend">
@@ -221,5 +220,6 @@
   </div>
 </div>
 
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>
