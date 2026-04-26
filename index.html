@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KE-GLOBE — 핵실험 타임라인</title>
+  <script type="module" src="/src/main.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    #cesiumContainer {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* ── 최상단 헤더 ── */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(10, 10, 15, 0.75);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    #header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #f5c842;
+    }
+    #header h1 span { color: #fff; font-weight: 400; }
+    #playBtn {
+      background: #f5c842;
+      color: #0a0a0f;
+      border: none;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #playBtn:hover { background: #ffd966; }
+
+    /* ── 하단 타임라인 패널 ── */
+    #panel {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.82);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 14px 24px 20px;
+    }
+    #timeline-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    #yearLabel {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #f5c842;
+      min-width: 52px;
+      text-align: right;
+    }
+    #yearSlider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: linear-gradient(to right, #f5c842, #e74c3c);
+      border-radius: 2px;
+      outline: none;
+    }
+    #yearSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #f5c842;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(245,200,66,0.6);
+    }
+    #info-row {
+      display: flex;
+      gap: 20px;
+      font-size: 0.75rem;
+      color: #888;
+    }
+    #info-row span { color: #bbb; }
+
+    /* ── 우측 레전드 ── */
+    #legend {
+      position: fixed;
+      top: 60px; right: 16px;
+      z-index: 100;
+      background: rgba(10,10,15,0.78);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.72rem;
+    }
+    #legend h3 { color: #aaa; margin-bottom: 8px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 5px;
+      color: #ccc;
+    }
+    .legend-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── 좌측 실험 상세 ── */
+    #detail {
+      position: fixed;
+      top: 60px; left: 16px;
+      z-index: 100;
+      background: rgba(10,10,15,0.82);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 14px 18px;
+      max-width: 260px;
+      display: none;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    #detail.visible { display: block; }
+    #detail .name { font-size: 1rem; font-weight: 700; color: #f5c842; margin-bottom: 6px; }
+    #detail .type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    #detail .type-h { background: #c0392b; color: #fff; }
+    #detail .type-a { background: #2980b9; color: #fff; }
+    #detail table { width: 100%; border-collapse: collapse; }
+    #detail td { padding: 3px 0; }
+    #detail td:first-child { color: #777; width: 80px; }
+    #detail td:last-child { color: #ddd; }
+    #detail .desc { margin-top: 8px; color: #aaa; font-size: 0.75rem; }
+    #detail-close {
+      position: absolute; top: 8px; right: 10px;
+      background: none; border: none; color: #555;
+      font-size: 1.1rem; cursor: pointer;
+    }
+    #detail-close:hover { color: #aaa; }
+  </style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div id="header">
+  <h1>KE<span>-GLOBE</span> · 핵실험 타임라인</h1>
+  <button id="playBtn">▶ 자동 재생</button>
+</div>
+
+<!-- Cesium 컨테이너 -->
+<div id="cesiumContainer"></div>
+
+<!-- 레전드 -->
+<div id="legend">
+  <h3>국가별</h3>
+  <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div> 미국</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div> 러시아 / 소련</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3498db"></div> 영국</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div> 프랑스</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#9b59b6"></div> 중국</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1abc9c"></div> 인도</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div> 파키스탄</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#95a5a6"></div> 북한</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#bdc3c7"></div> 기타</div>
+  <h3 style="margin-top:12px">크기 = 폭발력</h3>
+</div>
+
+<!-- 실험 상세 정보 -->
+<div id="detail">
+  <button id="detail-close">✕</button>
+  <div class="name" id="d-name">-</div>
+  <div id="d-badge"></div>
+  <table>
+    <tr><td>연도</td><td id="d-year">-</td></tr>
+    <tr><td>국가</td><td id="d-country">-</td></tr>
+    <tr><td>위치</td><td id="d-location">-</td></tr>
+    <tr><td>폭발력</td><td id="d-yield">-</td></tr>
+    <tr><td>유형</td><td id="d-type">-</td></tr>
+  </table>
+  <div class="desc" id="d-desc"></div>
+</div>
+
+<!-- 하단 타임라인 -->
+<div id="panel">
+  <div id="timeline-row">
+    <div id="yearLabel">1945</div>
+    <input type="range" id="yearSlider" min="1945" max="2024" value="1945" step="1" />
+  </div>
+  <div id="info-row">
+    <span>전체 실험: <b id="total-count">0</b>회</span>
+    <span>표시 중: <b id="visible-count">0</b>개</span>
+    <span>소련 1호 – 트리니티(미국) 1945.7.16</span>
+  </div>
+</div>
+
+</body>
+</html>
