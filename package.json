@@ -9,8 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "three": "^0.170.0",
-    "globe.gl": "^2.27.0"
+    "globe.gl": "^2.27.0",
+    "three": "^0.184.0",
+    "three-globe": "^2.44.1"
   },
   "devDependencies": {
     "vite": "^5.4.0"
