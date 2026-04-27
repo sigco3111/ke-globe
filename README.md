@@ -4,8 +4,6 @@
 >
 > 1945년 트리니티부터 2023년 북한 6차 핵실험까지, 전 세계 핵실험 역사를 3D Globe 위에서 시간순으로 탐색하세요.
 
-![KE-GLOBE Preview](https://raw.githubusercontent.com/sigco3111/ke-globe/main/public/preview.png)
-
 ---
 
 ## 개요
