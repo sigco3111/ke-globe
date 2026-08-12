@@ -1,6 +1,6 @@
 # KE-GLOBE — 전 세계 핵실험 타임라인 3D 시각화
 
-> 🌐 **Live Demo**: [https://ke-globe.vercel.app](https://ke-globe.vercel.app)
+> 🌐 **Live Demo**: [https://sigco3111.github.io/ke-globe](https://sigco3111.github.io/ke-globe)
 >
 > 1945년 트리니티부터 2023년 북한 6차 핵실험까지, 전 세계 핵실험 역사를 3D Globe 위에서 시간순으로 탐색하세요.
 
